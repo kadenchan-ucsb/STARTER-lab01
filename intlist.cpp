@@ -8,10 +8,13 @@ using std::cout;
 
 // copy constructor
 IntList::IntList(const IntList& source) {
-    Node *head;
-    Node *tail;
-
-    
+    head = nullptr;
+    tail = nullptr;
+    Node* curr = source.head;
+    while (curr != nullptr) {
+        push_back(curr->info);
+        curr = curr->next;
+    }
 }
 
 // destructor deletes all nodes
@@ -28,6 +31,7 @@ IntList::~IntList() {
 
 // return sum of values in list
 int IntList::sum() const {
+    if (head == nullptr) return 0;
     Node *curr = head;
     int result = 0;
     while (curr!=tail){
@@ -40,6 +44,7 @@ int IntList::sum() const {
 
 // returns true if value is in the list; false if not
 bool IntList::contains(int value) const {
+    if (head == nullptr) return false;
     Node *curr = head;
     while (curr!=tail){
         if (curr->info == value){
@@ -75,7 +80,7 @@ int IntList::max() const {
 // returns average (arithmetic mean) of all values, or
 // 0 if list is empty
 double IntList::average() const {
-    
+    if (head == nullptr) return 0.0;
     Node *curr = head;
     int result = 0;
     int num = 0;
@@ -94,7 +99,8 @@ double IntList::average() const {
 
 // inserts value as new node at beginning of list
 void IntList::push_front(int value) {
-    Node *newNode = new Node(value);
+    Node *newNode = new Node();
+    newNode->info = value;
     if (head == nullptr){
         head = newNode;
         tail = newNode;
@@ -124,14 +130,9 @@ void IntList::push_back(int value) {
 int IntList::count() const {
     Node *curr = head;
     int num = 0;
-    while (curr!=tail){
-        curr = curr->next;
+    while (curr != nullptr){
         num++;
-    }
-    result+=curr->info;
-    num++;
-    if (num == 0){
-        return 0.0;
+        curr = curr->next;
     }
     return num;
 }
@@ -140,9 +141,22 @@ int IntList::count() const {
 //Assignment operator should copy the list from the source
 //to this list, deleting/replacing any existing nodes
 IntList& IntList::operator=(const IntList& source){
-    ~IntList();
-    self.head=source.head;
-    self.tail=source.tail;
+    if (this == &source) {
+        return *this;
+    }
+    // delete existing nodes
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+    tail = nullptr;
+    // copy from source
+    Node* curr = source.head;
+    while (curr != nullptr) {
+        push_back(curr->info);
+        curr = curr->next;
+    }
     return *this;
 }
 
